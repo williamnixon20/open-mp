@@ -145,7 +145,46 @@ int main(void)
     MPI_Scatter(matrix, 2 * N * n_rows, MPI_DOUBLE, current_matrix,
                 2 * N * n_rows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    print_matrix(current_matrix, n_rows, 2 * N);
+    for (int row = 0; row < N; row++) 
+    {
+        int mapped_rank = row / n_rows;
+
+        if (world_rank == mapped_rank) 
+        {
+            int local_row = row % n_rows;
+
+            double pivot = current_matrix[(row % n_rows) * n_cols + row];
+            
+            // For each column, divide by the leading pivot number
+            for (int col = row; col < n_cols; col++)
+            {
+                current_matrix[local_row * n_cols + col] /= pivot;
+            }
+
+            // For each row below we want to remove the leading number until it gets zero
+            for (int elim_row = 0; elim_row < n_rows; elim_row++)
+            {
+                // If the row is the local_row then skip
+                if (elim_row == local_row)
+                {
+                    continue;
+                }
+
+                // Scale amount
+                double scale = current_matrix[elim_row * n_cols + row];
+                
+                // For each column in the row
+                for (int col = row; col < n_cols; col++)
+                {
+                    // For every number (col) in the elim row we minus it with
+                    // The scale of the pivot row 
+                    current_matrix[elim_row * n_cols + col] -=
+                        current_matrix[local_row * n_cols + col] * scale;
+                }
+            }
+        }
+    }
+
 
     MPI_Gather(current_matrix, 2 * N * n_rows, MPI_DOUBLE, matrix, 2 * N * n_rows,
                MPI_DOUBLE, 0, MPI_COMM_WORLD);
