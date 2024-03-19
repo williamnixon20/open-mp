@@ -6,6 +6,7 @@ OUTPUT_FILE ?= output.txt
 
 # USAGE
 # To run serial program:
+# make run_serial INPUT_FILE=./test_cases/1024.txt OUTPUT_FILE=output.txt
 # make time_run_serial INPUT_FILE=./test_cases/1024.txt OUTPUT_FILE=output.txt
 
 # Default target
