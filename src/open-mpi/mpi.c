@@ -94,6 +94,31 @@ void save_file(double *matrix, int N)
     }
 }
 
+void iterate_and_eliminate(double *matrix, double *pivot_row, int n_rows, int n_cols, int row)
+{
+    for (int iter_row = 0; iter_row < n_rows; iter_row++)
+    {
+        int curr_offset = iter_row * n_cols;
+        double scale = matrix[curr_offset + row];
+        double epsilon = scale - 1;
+        // fp imprecision
+        if (epsilon < 0.0000001 && epsilon > -0.0000001)
+        {
+            continue;
+        }
+
+        // Bounded di kiri dan di kanan, di kiri by row and di kanan by stop_col.
+        // Bound kiri: Asumsi kanan udah kosong
+        // Bound kanan: Di kanan masih kosong
+        int stop_col = (n_cols / 2) + (row + 1);
+        for (int col = row; col < stop_col; col++)
+        {
+            matrix[curr_offset + col] -=
+                pivot_row[col] * scale;
+        }
+    }
+}
+
 int main(void)
 {
     MPI_Init(NULL, NULL);
@@ -113,8 +138,8 @@ int main(void)
         // Process 0 reads from stdin
         if (scanf("%d\n", &N) == 1)
         {
-            printf("N Matrix: : %d\n", N);
-            printf("Mallocing matrix of size %lu\n", (2 * N) * N * sizeof(double));
+            // printf("N Matrix: : %d\n", N);
+            // printf("Mallocing matrix of size %lu\n", (2 * N) * N * sizeof(double));
             matrix = malloc((2 * N) * N * sizeof(double));
             if (matrix == NULL)
             {
@@ -135,7 +160,7 @@ int main(void)
     int end_row = start_row + n_rows;
 
     double *current_matrix = malloc((2 * N) * n_rows * sizeof(double));
-    printf("[%d/%d] N: %d N_rows: %d Start_Row: %d End_Rows: %d\n", world_rank, world_size, N, n_rows, start_row, end_row);
+    // printf("[%d/%d] N: %d N_rows: %d Start_Row: %d End_Rows: %d\n", world_rank, world_size, N, n_rows, start_row, end_row);
     if (current_matrix == NULL)
     {
         fprintf(stderr, "Malloc error for current_matrix! in process rank %d. Aborting.. \n", world_rank);
@@ -145,47 +170,44 @@ int main(void)
     MPI_Scatter(matrix, 2 * N * n_rows, MPI_DOUBLE, current_matrix,
                 2 * N * n_rows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    for (int row = 0; row < N; row++) 
+    double *pivot_row = malloc(n_cols * sizeof(double));
+
+    // Loop setiap row
+    // Ada 2 kasus, either:
+    // : row ini tanggung jawab dia sendiri (sesuai sama start_row, end_row).
+    //   normalize rownya sendiri then broadcast sbg pivot, then eliminate.
+    // : row ini diluar range dia
+    //   Dia cuma nerima broadcast dari thread lain, terus dia eliminate row2nya sendiri.
+    for (int row = 0; row < N; row++)
     {
-        int mapped_rank = row / n_rows;
+        int curr_rank = row / n_rows;
 
-        if (world_rank == mapped_rank) 
+        if (world_rank == curr_rank)
         {
-            int local_row = row % n_rows;
+            int curr_row = row % n_rows;
 
-            double pivot = current_matrix[(row % n_rows) * n_cols + row];
-            
-            // For each column, divide by the leading pivot number
+            int curr_offset = curr_row * n_cols;
+
+            double pivot = current_matrix[curr_offset + row];
+
             for (int col = row; col < n_cols; col++)
             {
-                current_matrix[local_row * n_cols + col] /= pivot;
+                current_matrix[curr_offset + col] /= pivot;
             }
 
-            // For each row below we want to remove the leading number until it gets zero
-            for (int elim_row = 0; elim_row < n_rows; elim_row++)
-            {
-                // If the row is the local_row then skip
-                if (elim_row == local_row)
-                {
-                    continue;
-                }
+            // Send the pivot row to the other processes, and eliminate column [row] from our rows..
+            MPI_Bcast(current_matrix + n_cols * curr_row, n_cols, MPI_DOUBLE, curr_rank, MPI_COMM_WORLD);
 
-                // Scale amount
-                double scale = current_matrix[elim_row * n_cols + row];
-                
-                // For each column in the row
-                for (int col = row; col < n_cols; col++)
-                {
-                    // For every number (col) in the elim row we minus it with
-                    // The scale of the pivot row 
-                    current_matrix[elim_row * n_cols + col] -=
-                        current_matrix[local_row * n_cols + col] * scale;
-                }
-            }
+            iterate_and_eliminate(current_matrix, current_matrix + n_cols * curr_row, n_rows, n_cols, row);
+        }
+        else
+        {
+            // Receive pivot from responsible process, and eliminate column [row] from our rows...
+            MPI_Bcast(pivot_row, n_cols, MPI_DOUBLE, curr_rank, MPI_COMM_WORLD);
+
+            iterate_and_eliminate(current_matrix, pivot_row, n_rows, n_cols, row);
         }
     }
-
-
     MPI_Gather(current_matrix, 2 * N * n_rows, MPI_DOUBLE, matrix, 2 * N * n_rows,
                MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
