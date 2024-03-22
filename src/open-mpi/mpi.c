@@ -15,10 +15,11 @@ void read_matrix(double *matrix, int N)
     // Read the matrix from stdin
     for (int i = 0; i < N; ++i)
     {
+        int curr_offset = i * 2 * N;
         for (int j = 0; j < N; ++j)
         {
             // printf("Reading element %d\n", i * 2 * N + j);
-            if (scanf("%lf", &matrix[i * 2 * N + j]) != 1)
+            if (scanf("%lf", &matrix[curr_offset + j]) != 1)
             {
                 fprintf(stderr, "Error reading matrix element at position (%d, %d).\n", i, j);
                 exit(1);
@@ -53,15 +54,16 @@ void initialize_identity(double *matrix, int N)
     // Initialize the identity matrix
     for (int i = 0; i < N; ++i)
     {
+        int curr_offset = i * 2 * N;
         for (int j = N; j < 2 * N; ++j)
         {
             if (i == j - N)
             {
-                matrix[i * 2 * N + j] = 1;
+                matrix[curr_offset + j] = 1;
             }
             else
             {
-                matrix[i * 2 * N + j] = 0;
+                matrix[curr_offset + j] = 0;
             }
         }
     }
@@ -79,9 +81,10 @@ void save_file(double *matrix, int N)
         fprintf(file, "%d\n", N);
         for (int i = 0; i < N; i++)
         {
+            int curr_offset = i * 2 * N;
             for (int j = N; j < 2 * N; j++)
             {
-                fprintf(file, "%f ", matrix[i * (2 * N) + j]);
+                fprintf(file, "%f ", matrix[curr_offset + j]);
             }
             fprintf(file, "\n");
         }
