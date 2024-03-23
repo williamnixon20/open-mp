@@ -2,7 +2,7 @@
 OUTPUT_FOLDER := bin
 TEST_CASE_FOLDER := test_cases
 INPUT_FILE ?= $(TEST_CASE_FOLDER)/1024.txt
-OUTPUT_FILE ?= output.txt
+OUTPUT_FILE ?= output_1024.txt
 NUM_OF_PROCESSOR ?= 4
 
 # USAGE
@@ -11,7 +11,7 @@ NUM_OF_PROCESSOR ?= 4
 # make time_run_serial INPUT_FILE=./test_cases/1024.txt OUTPUT_FILE=output.txt
 
 # Default target
-all: serial open-mpi
+all: serial open_mpi
 
 # Compile serial
 serial: $(OUTPUT_FOLDER)/serial
@@ -29,7 +29,6 @@ time_run_serial: serial
 
 # Compile Open-MPI
 open_mpi: $(OUTPUT_FOLDER)/open-mpi
-
 $(OUTPUT_FOLDER)/open-mpi: src/open-mpi/mpi.c | $(OUTPUT_FOLDER)
 	mpicc $< -o $@
 

@@ -1,14 +1,30 @@
-# Tugas Kecil - Paralel Inverse Matrix
+# Paralel Inverse Matrix
 
-Template Tugas Kecil IF3230 Sistem Paralel dan Terdistribusi
+Parallelizing matrix inverse using OPEN_MPI, OPEN_MP, and CUDA.
 
 ## How to Run
 
-### Serial
+### Compiling
+1. Be at root folder
+2. Run `make all`
+3. Program should be compiled and put into /bin. Verify that /bin/open-mpi and /bin/serial exists.
 
-Contoh build, run, dan menyimpan output untuk test case `32.txt`.
+### Running
 
-```console
-user@user:~/kit-tucil-sister-2024$ make
-user@user:~/kit-tucil-sister-2024$ cat ./test_cases/32.txt | ./bin/serial > 32.txt
-```
+#### Serial
+1. To run serial program, run `make time_run_serial`
+2. To modify the input, either change the `INPUT_FILE` parameter in makefile, or change through the arguments like so `make time_run_serial INPUT_FILE=./test_cases/1024.txt OUTPUT_FILE=output.txt`
+3. Output should be in the root folder.
+
+#### Parallel
+1. To run the parallel program, run `make time_run_open_mpi`
+2. To modify the input, either change the INPUT_FILE` parameter in makefile, or change through the arguments like in Serial.
+3. Output should be in the root folder.
+
+### Running in server
+1. Go through setup of SSH-ing to a server with `k02-08`'s key. SSH to VM 1 with public IP 4.145.183.206.
+2. Ls to the project's root dir, then run `git pull`.
+3. Compile the program there using `make all`. This will compile both the serial + parallel program.
+3. Running the serial program is straight forward, follow directions above.
+4. Distribute the compiled parallel program by running `./copy_mpi.sh`. This will copy the mpi executable to all hosts.
+5. Run the parallel program by running `time mpirun -np 4 --hostfile hostfile ./mpi < {input_file}`
