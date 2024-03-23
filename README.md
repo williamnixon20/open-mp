@@ -26,5 +26,10 @@ Parallelizing matrix inverse using OPEN_MPI, OPEN_MP, and CUDA.
 2. Ls to the project's root dir, then run `git pull`.
 3. Compile the program there using `make all`. This will compile both the serial + parallel program.
 3. Running the serial program is straight forward, follow directions above.
-4. Distribute the compiled parallel program by running `./copy_mpi.sh`. This will copy the mpi executable to all hosts.
-5. Run the parallel program by running `time mpirun -np 4 --hostfile hostfile ./mpi < {input_file}`
+4. Distribute the compiled parallel program by running `bash ./copy_mpi.sh`. This will copy the mpi executable to all hosts.
+5. Run the parallel program by running `make time_run_open_mpi_server`
+6. The serial program does not have enough cores. `add NUM_OF_PROCESSOR=1` when running serial.
+
+If there's any difficulty in running the program, raise an issue and tag us! <3
+
+Made with <3 by NVIDIA STOOONKS

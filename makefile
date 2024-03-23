@@ -25,7 +25,7 @@ run_serial: serial
 	./$(OUTPUT_FOLDER)/serial < $(INPUT_FILE) > $(OUTPUT_FILE)
 
 time_run_serial: serial
-	@time ./$(OUTPUT_FOLDER)/serial < ${INPUT_FILE} > ${OUTPUT_FILE}
+	time ./$(OUTPUT_FOLDER)/serial < ${INPUT_FILE} > ${OUTPUT_FILE}
 
 # Compile Open-MPI
 open_mpi: $(OUTPUT_FOLDER)/open-mpi
@@ -34,10 +34,14 @@ $(OUTPUT_FOLDER)/open-mpi: src/open-mpi/mpi.c | $(OUTPUT_FOLDER)
 
 # Run open-mpi program
 run_open_mpi: open_mpi
-	@mpirun -np ${NUM_OF_PROCESSOR} ./$(OUTPUT_FOLDER)/open-mpi < ${INPUT_FILE}
+	mpirun -np ${NUM_OF_PROCESSOR} ./$(OUTPUT_FOLDER)/open-mpi < ${INPUT_FILE}
 
 time_run_open_mpi: open_mpi
-	@time mpirun -np ${NUM_OF_PROCESSOR} ./$(OUTPUT_FOLDER)/open-mpi < ${INPUT_FILE}
+	time mpirun -np ${NUM_OF_PROCESSOR} ./$(OUTPUT_FOLDER)/open-mpi < ${INPUT_FILE}
+
+time_run_open_mpi_server: open_mpi
+	time mpirun -np ${NUM_OF_PROCESSOR} --hostfile hostfile ./${OUTPUT_FOLDER}/open-mpi < ${INPUT_FILE}
+
 
 # Make the output folder
 $(OUTPUT_FOLDER):
