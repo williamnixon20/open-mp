@@ -111,8 +111,8 @@ void iterate_and_eliminate(double *matrix, double *pivot_row, int n_rows, int n_
         }
 
         // Bounded di kiri dan di kanan, di kiri by row and di kanan by stop_col.
-        // Bound kiri: Asumsi kanan udah kosong
-        // Bound kanan: Di kanan masih kosong
+        // Bound kiri: Asumsi kiri pivot udah kosong (0 semua)
+        // Bound kanan: Di kanan pivot masih kosong (0 semua), gausah di kurang.
         int stop_col = (n_cols / 2) + (row + 1);
         for (int col = row; col < stop_col; col++)
         {
