@@ -114,11 +114,29 @@ int main(void)
         initialize_identity(matrix, N);
     }
 
-    #pragma omp parallel 
+    for (int i = 0; i < N; i++)
     {
-        #pragma omp single 
+        int curr_pivot_offset = i * 2 * N;
+
+        double pivot_value = matrix[curr_pivot_offset + i];
+
+        // To avoid diving by 0
+        if ((pivot_value) < 0.00001 && (pivot_value) > -0.00001)
         {
-            printf("Number of threads: %d\n", omp_get_num_threads());
+            printf("Pivot value is already normalized %d\n", i);
+        } else {
+            #pragma omp for
+            for (int j = 0; j < 2 * N; j++)
+            {
+                matrix[curr_pivot_offset + j] /= pivot_value;
+            }
+        }
+
+        // Parallelize elimination of the pivot column
+        #pragma omp parallel for
+        for (int j = 0; j < N; j++)
+        {
+            // Implement this
         }
     }
 
