@@ -117,29 +117,35 @@ int main(void)
     for (int i = 0; i < N; i++)
     {
         int curr_pivot_offset = i * 2 * N;
-
         double pivot_value = matrix[curr_pivot_offset + i];
-
-        // To avoid diving by 0
         if ((pivot_value) < 0.00001 && (pivot_value) > -0.00001)
         {
             printf("Pivot value is already normalized %d\n", i);
-        } else {
-            #pragma omp for
+        }
+        else
+        {
             for (int j = 0; j < 2 * N; j++)
             {
                 matrix[curr_pivot_offset + j] /= pivot_value;
             }
         }
-
-        // Parallelize elimination of the pivot column
-        #pragma omp parallel for
+// Parallelize elimination of the pivot column
+#pragma omp parallel for
         for (int j = 0; j < N; j++)
         {
-            // Implement this
+            int curr_row_offset = j * 2 * N;
+            double factor = matrix[curr_row_offset + i];
+            if ((factor - 1) < 0.00001 && (factor - 1) > -0.00001)
+            {
+                continue;
+            }
+            // printf("Factor: %f\n", factor);
+            for (int k = 0; k < 2 * N; k++)
+            {
+                matrix[curr_row_offset + k] -= factor * matrix[curr_pivot_offset + k];
+            }
         }
     }
-
 
     save_file(matrix, N);
 
