@@ -129,8 +129,9 @@ int main(void)
                 matrix[curr_pivot_offset + j] /= pivot_value;
             }
         }
-// Parallelize elimination of the pivot column
-#pragma omp parallel for
+
+        // Parallelize elimination of the pivot column
+        #pragma omp parallel for
         for (int j = 0; j < N; j++)
         {
             int curr_row_offset = j * 2 * N;
