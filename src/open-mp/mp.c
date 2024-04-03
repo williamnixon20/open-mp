@@ -120,6 +120,7 @@ int main(void)
         }
         else
         {
+#pragma omp parallel for
             for (int j = 0; j < 2 * N; j++)
             {
                 matrix[curr_pivot_offset + j] /= pivot_value;
