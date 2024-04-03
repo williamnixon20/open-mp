@@ -54,6 +54,14 @@ run_open_mp: open_mp
 time_run_open_mp: open_mp
 	time $(OUTPUT_FOLDER)/open-mp < ${INPUT_FILE} > ${OUTPUT_FILE}
 
+## Compile OPEN_MP
+open_mp: $(OUTPUT_FOLDER)/open-mp
+$(OUTPUT_FOLDER)/open-mp: src/open-mp/mp.c | $(OUTPUT_FOLDER)
+	gcc -fopenmp $< -o $@
+	
+time_run_open_mp: open_mp
+	time ./$(OUTPUT_FOLDER)/open-mp < ${INPUT_FILE}
+	
 # Make the output folder
 $(OUTPUT_FOLDER):
 	mkdir -p $@
