@@ -85,7 +85,7 @@ void save_file(double *matrix, int N)
             fprintf(file, "\n");
         }
         fclose(file);
-        printf("Result matrix logged to file named result_inverse_matrix_%d.txt.\n", N);
+        printf("Result matrix logged to file named mp_inverse_%d.txt.\n", N);
     }
     else
     {
