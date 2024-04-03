@@ -68,7 +68,7 @@ void initialize_identity(double *matrix, int N)
 void save_file(double *matrix, int N)
 {
     char filename[100]; // Adjust the size according to your needs
-    snprintf(filename, sizeof(filename), "result_inverse_matrix_%d.txt", N);
+    snprintf(filename, sizeof(filename), "mp_inverse_%d.txt", N);
 
     // Open the file
     FILE *file = fopen(filename, "w");
@@ -114,7 +114,7 @@ int main(void)
     {
         int curr_pivot_offset = i * 2 * N;
         double pivot_value = matrix[curr_pivot_offset + i];
-        if ((pivot_value) < 0.00001 && (pivot_value) > -0.00001)
+        if ((pivot_value) < 0.00000001 && (pivot_value) > -0.00000001)
         {
             printf("Pivot value is already normalized %d\n", i);
         }
@@ -126,13 +126,13 @@ int main(void)
             }
         }
 
-        // Parallelize elimination of the pivot column
-        #pragma omp parallel for
+// Parallelize elimination of the pivot column
+#pragma omp parallel for
         for (int j = 0; j < N; j++)
         {
             int curr_row_offset = j * 2 * N;
             double factor = matrix[curr_row_offset + i];
-            if ((factor - 1) < 0.00001 && (factor - 1) > -0.00001)
+            if ((factor - 1) < 0.00000001 && (factor - 1) > -0.00000001)
             {
                 continue;
             }
