@@ -9,10 +9,6 @@ https://docs.google.com/document/d/1BS7HkoFVYfCC6CQI_lWaLgAxgTip7U44yUf2FIAV0JY/
 */
 
 #include <omp.h>
-
-// #include <stdio.h>
-// #include <stdlib.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -89,7 +85,7 @@ void save_file(double *matrix, int N)
             fprintf(file, "\n");
         }
         fclose(file);
-        printf("Result matrix logged to file.\n");
+        printf("Result matrix logged to file named result_inverse_matrix_%d.txt.\n", N);
     }
     else
     {

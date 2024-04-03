@@ -18,7 +18,12 @@ Parallelizing matrix inverse using OPEN_MPI, OPEN_MP, and CUDA.
 
 #### Parallel
 1. To run the parallel program, run `make time_run_open_mpi`
-2. To modify the input, either change the INPUT_FILE` parameter in makefile, or change through the arguments like in Serial.
+2. To modify the input, either change the `INPUT_FILE` parameter in makefile, or change through the arguments like in Serial.
+3. Output should be in the root folder.
+
+#### Open-MP
+1. To run the open-mp program, run `make time_run_open_mp`
+2. To modify the input, either change the `INPUT_FILE` parameter in makefile, or change through the arguments like in Serial.
 3. Output should be in the root folder.
 
 ### Running in server

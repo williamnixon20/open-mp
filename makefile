@@ -11,7 +11,7 @@ NUM_OF_PROCESSOR ?= 4
 # make time_run_serial INPUT_FILE=./test_cases/1024.txt OUTPUT_FILE=output.txt
 
 # Default target
-all: serial open_mpi
+all: serial open_mpi open_mp
 
 # Compile serial
 serial: $(OUTPUT_FOLDER)/serial
@@ -42,6 +42,17 @@ time_run_open_mpi: open_mpi
 time_run_open_mpi_server: open_mpi
 	time mpirun -np ${NUM_OF_PROCESSOR} --hostfile hostfile ./${OUTPUT_FOLDER}/open-mpi < ${INPUT_FILE}
 
+# Compile Open-MP
+open_mp: $(OUTPUT_FOLDER)/open-mp
+$(OUTPUT_FOLDER)/open-mp: src/open-mp/mp.c | $(OUTPUT_FOLDER)
+	gcc -fopenmp $< -o $@
+
+# Run open-mp program
+run_open_mp: open_mp
+	$(OUTPUT_FOLDER)/open-mp < ${INPUT_FILE} > ${OUTPUT_FILE}
+
+time_run_open_mp: open_mp
+	time $(OUTPUT_FOLDER)/open-mp < ${INPUT_FILE} > ${OUTPUT_FILE}
 
 # Make the output folder
 $(OUTPUT_FOLDER):
