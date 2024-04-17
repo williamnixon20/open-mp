@@ -26,6 +26,27 @@ Parallelizing matrix inverse using OPEN_MPI, OPEN_MP, and CUDA.
 2. To modify the input, either change the `INPUT_FILE` parameter in makefile, or change through the arguments like in Serial.
 3. Output should be in the root folder.
 
+#### CUDA
+1. To run the cuda program, copy the ipynb file to google colab
+2. Run all the codes from google colab
+
+#### Performance Benchmark (Bonus)
+- Running Environment (Non-CUDA): Linux - Ubuntu 22.04 LTS - Intel® Core™ i3-1115G4 - RAM 12 GB
+
+- Running Environment (CUDA): Google Colab - T4 GPU
+
+| Metric     | Serial   | OpenMPI | OpenMP   | CUDA     |
+|------------|----------|---------|----------|----------|
+| N          |          |         |          |          |
+| 64         | 0m0.01s  | 0m0.01s | 0m0.01s  | 0m0.024s |
+| 128        | 0m0.06s  | 0m0.02s | 0m0.10s  | 0m0.038s |
+| 256        | 0m0.250s | 0m0.03s | 0m0.31s  | 0m0.074s |
+| 512        | 0m1.770s | 0m0.11s | 0m1.54s  | 0m0.227s |
+| 1024       | 0m12.93s | 0m0.38s | 0m12.16s | 0m1.041s |
+| 2048       | 1m8.845s | 0m1.36s | 1m45.22s | 0m5.772s |
+
+
+
 ### Running in server
 1. Go through setup of SSH-ing to a server with `k02-08`'s key. SSH to VM 1 with public IP 4.145.183.206.
 2. Ls to the project's root dir, then run `git pull`.
