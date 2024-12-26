@@ -59,3 +59,4 @@ Parallelizing matrix inverse using OPEN_MPI, OPEN_MP, and CUDA.
 If there's any difficulty in running the program, raise an issue and tag us! <3
 
 Made with <3 by NVIDIA STOOONKS
+# open-mp
